@@ -1,0 +1,44 @@
+name: Manage GitHub Actions and Trigger Workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      task:
+        description: 'Task to perform (enable, disable, or run-workflow)'
+        required: true
+        default: 'enable'
+      action_name:
+        description: 'Name of the action to perform or workflow to run'
+        required: true
+      target_owner:
+        description: 'Owner of the target repository'
+        required: true
+      target_repo:
+        description: 'Name of the target repository'
+        required: true
+
+jobs:
+  manage-actions:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install requests
+
+    - name: Run manage actions and trigger workflow script
+      run: python manage_actions_and_trigger_workflow.py ${{ github.event.inputs.task }} ${{ github.event.inputs.action_name }}
+      env:
+        MY_GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        OWNER: ${{ github.event.inputs.target_owner }}
+        REPO: ${{ github.event.inputs.target_repo }}
+        WORKFLOW_ID: ${{ secrets.WORKFLOW_ID }}
