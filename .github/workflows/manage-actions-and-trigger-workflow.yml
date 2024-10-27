@@ -7,9 +7,10 @@ on:
         description: 'Task to perform (enable, disable, or run-workflow)'
         required: true
         default: 'enable'
-      action_name:
+      workflow_name:
         description: 'Name of the action to perform or workflow to run'
-        required: true
+        required: false
+        default: 'default'  # Placeholder name; you can update this when running specific workflows
       target_owner:
         description: 'Owner of the target repository'
         required: true
@@ -36,7 +37,7 @@ jobs:
         pip install requests
 
     - name: Run manage actions and trigger workflow script
-      run: python manage_actions_and_trigger_workflow.py ${{ github.event.inputs.task }} ${{ github.event.inputs.action_name }}
+      run: python manage_actions_and_trigger_workflow.py ${{ github.event.inputs.task }} ${{ github.event.inputs.workflow_name }}
       env:
         MY_GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         OWNER: ${{ github.event.inputs.target_owner }}
